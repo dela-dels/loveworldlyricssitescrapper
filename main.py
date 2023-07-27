@@ -24,19 +24,6 @@ for post in posts:
     with open(directory.joinpath(songTitle + ".txt"), 'w') as file:
         file.write(lyrics)
 
-    # for t in lyricsContainer:
-
-    #     stripedTags = str(t).replace("<p>", "").replace(
-    #         "</p>", "").replace("<strong>", "").replace("</strong>", "")
-
-    #     songLyrics = str(stripedTags).replace("<br/>", "\n")
-
-    #     print("lyrics", songLyrics)
-
-    #     directory = pathlib.Path('./songs')
-    #     with open(directory.joinpath(songTitle + ".txt"), 'w') as file:
-    #         file.write(songLyrics)
-
 
 # Get the root url to scrape from
 # On the songs page, songs are listed with their title and a short text
