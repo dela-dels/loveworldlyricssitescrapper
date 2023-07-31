@@ -4,14 +4,16 @@ import pathlib
 
 url = 'https://loveworldlyrics.com/artiste/lyrics/'
 
-articles = requests.get(url)
-formattedOutput = BeautifulSoup(articles.text, 'lxml')
+response = requests.get(url)
+# formattedOutput = BeautifulSoup(response.content, 'html.parser')
+formattedOutput = BeautifulSoup(response.text, 'html.parser')
 posts = formattedOutput.find_all('h2', class_='post-box-title')
 
 for post in posts:
     postUrl = post.find('a', href=True)['href']
 
-    singlePost = BeautifulSoup(requests.get(postUrl).text, 'lxml')
+    # singlePost = BeautifulSoup(requests.get(postUrl).content, 'html.parser')
+    singlePost = BeautifulSoup(requests.get(postUrl).content, 'lxml')
     songTitle = singlePost.find('h1', class_='name').span.string
 
     """
@@ -20,21 +22,13 @@ for post in posts:
     href="https://loveworldlyrics.com/artiste/simeon-rich/">Written by Simeon</a>. Since we wouldn't be needing this
     and it'll making importing lyrics into the projection software easier, we strip out all occurrences of an <a></a> tag.
     """
-    for a in singlePost.find_all('a'):
+    for a in singlePost.find_all('a', attrs={"class": "wp-block-button__link"}):
         a.decompose()
 
-    lyricsContainer = singlePost.find('div', class_='entry').find_all('p')
-
-    lyrics = str(lyricsContainer).replace("<p>", "").replace(
-        "</p>", "").replace("<strong>", "").replace("</strong>", "").replace("<br/>", "\n").replace("[", "").replace("]", "")
-    print(lyrics)
+    for a in singlePost.find_all('a', attrs={"data-type": "URL"}):
+        a.decompose()
 
     directory = pathlib.Path('./songs')
-    with open(directory.joinpath(songTitle + ".txt"), 'w') as file:
-        file.write(lyrics)
-
-
-# Get the root url to scrape from
-# On the songs page, songs are listed with their title and a short text
-# Loop through all the articles on the root page and get the url for each and every article (song) NB: This is a paginated list
-# On the page for specific articles(songs), look through the html and extract the title and the lyrics for the song
+    with open(directory.joinpath(songTitle + ".txt"), 'a') as file:
+        for t in singlePost.find('div', class_='entry').find_all('p'):
+            file.write(t.get_text() + "\n")

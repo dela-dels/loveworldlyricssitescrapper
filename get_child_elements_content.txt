@@ -1,0 +1,5 @@
+# if len(list(t.children)) > 1:
+            #     for c in list(t.children):
+            #         file.write(c.get_text() + "\n")
+            # else:
+            #     file.write(t.get_text())
